@@ -122,3 +122,6 @@ dmypy.json
 # IDE settings
 .idea/
 .vscode/
+
+# Project Context
+project_context.md
