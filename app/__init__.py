@@ -16,6 +16,9 @@ def create_app(config_class=Config):
     from .routes.main import main as main_blueprint
     app.register_blueprint(main_blueprint)
 
+    from .routes.transfers import bp as transfers_blueprint
+    app.register_blueprint(transfers_blueprint)
+
     from app.models import anomaly, inventory, item, kitchen, log, menu_item, menu, school, warehouse
 
     return app

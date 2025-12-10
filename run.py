@@ -6,11 +6,18 @@ app = create_app()
 
 @app.shell_context_processor
 def make_shell_context():
-    return dict(db=db, Anomaly=anomaly, Inventory=inventory, Item=item, Kitchen=kitchen, Log=log, 
-                MenuItem=menu_item, Menu=menu, School=school, Warehouse=warehouse)
+    return dict(db=db, Anomaly=anomaly.Anomaly, Inventory=inventory.Inventory, Item=item.Item, Kitchen=kitchen.Kitchen, Log=log.Log, 
+                MenuItem=menu_item.MenuItem, Menu=menu.Menu, School=school.School, Warehouse=warehouse.Warehouse)
+
+@app.cli.command("process-logs")
+def process_logs_command():
+    """Runs the log processing service to check for anomalies."""
+    from app.services import log_processor
+    print("Starting log processing from CLI...")
+    log_processor.process_pending_logs()
+    print("Log processing from CLI finished.")
 
 if __name__ == '__main__':
     with app.app_context():
-        if not os.path.exists(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'app.db')):
-            db.create_all()
+        db.create_all()
     app.run(debug=True)
