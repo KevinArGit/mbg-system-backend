@@ -7,12 +7,21 @@ from app.models.anomaly import Anomaly
 from app.models.inventory import Inventory
 
 # Define the timeout period for a pending dispatch.
-DISPATCH_TIMEOUT_HOURS = 24
+DISPATCH_TIMEOUT_MINUTES = 2
 
 # --- Configuration for Transfer Matching ---
+# This map defines the rules for matching dispatch and receipt logs.
+# Each entry is a tuple: (Dispatch Log Type, Receipt Log Type)
+# The value is another tuple defining the ID fields to match: (Source ID Field, Destination ID Field)
+#
+# For example, for a warehouse-to-kitchen transfer:
+# - The dispatch log must have 'warehouse_id' (source) and 'kitchen_id' (destination).
+# - The receipt log must also have matching 'warehouse_id' and 'kitchen_id'.
 TRANSFER_MAP = {
     ('dispatch_from_warehouse', 'receipt_at_kitchen'): ('warehouse_id', 'kitchen_id'),
     ('dispatch_from_kitchen', 'receipt_at_school'): ('kitchen_id', 'school_id'),
+    # Add other transfer types here, e.g., kitchen-to-kitchen
+    # ('dispatch_from_kitchen', 'receipt_at_kitchen'): ('kitchen_id', 'kitchen_id'),
 }
 # -----------------------------------------
 
@@ -72,7 +81,7 @@ def process_pending_logs():
             
             dispatched_quantity = dispatch_log.current_quantity
             total_received_quantity = sum(receipt.current_quantity for receipt in potential_receipts)
-            is_timed_out = datetime.utcnow() > dispatch_log.timestamp + timedelta(hours=DISPATCH_TIMEOUT_HOURS)
+            is_timed_out = datetime.utcnow() > dispatch_log.timestamp + timedelta(minutes=DISPATCH_TIMEOUT_MINUTES)
 
             if total_received_quantity == dispatched_quantity:
                 # --- Perfect Match ---

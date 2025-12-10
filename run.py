@@ -9,6 +9,12 @@ def make_shell_context():
     return dict(db=db, Anomaly=anomaly.Anomaly, Inventory=inventory.Inventory, Item=item.Item, Kitchen=kitchen.Kitchen, Log=log.Log, 
                 MenuItem=menu_item.MenuItem, Menu=menu.Menu, School=school.School, Warehouse=warehouse.Warehouse)
 
+@app.cli.command("init-db")
+def init_db_command():
+    """Creates the database tables."""
+    db.create_all()
+    print("Initialized the database.")
+
 @app.cli.command("process-logs")
 def process_logs_command():
     """Runs the log processing service to check for anomalies."""
@@ -20,4 +26,4 @@ def process_logs_command():
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
-    app.run(debug=True)
+    app.run(debug=True, host="0.0.0.0")

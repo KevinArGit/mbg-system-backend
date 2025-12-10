@@ -88,9 +88,9 @@ Logs the receipt of one or more items at a kitchen, presumably from a warehouse.
 
 ---
 
-## 3. Dispatch from Kitchen
+## 3. Dispatch from Kitchen (Menu-Based)
 
-Logs the dispatch of one or more items from a kitchen to a school.
+Logs the dispatch of one or more menus from a kitchen to a school. The API will automatically "explode" the menus into their raw item components and create individual logs for each item.
 
 - **Endpoint:** `/api/dispatch/kitchen`
 - **Method:** `POST`
@@ -100,10 +100,11 @@ Logs the dispatch of one or more items from a kitchen to a school.
 
 ```json
 {
-  "source_kitchen_id": 5,
-  "destination_school_id": 10,
-  "items": [
-    { "item_id": 789, "quantity": 50 }
+  "source_kitchen_id": 1,
+  "destination_school_id": 1,
+  "menus": [
+    { "menu_id": 1, "quantity": 5 },
+    { "menu_id": 2, "quantity": 10 }
   ]
 }
 ```
@@ -113,23 +114,23 @@ Logs the dispatch of one or more items from a kitchen to a school.
 - **Success (201 Created)**
   ```json
   {
-    "message": "Successfully created 1 dispatch logs.",
-    "log_ids": [5]
+    "message": "Successfully created 5 item dispatch logs from menus.",
+    "log_ids": [5, 6, 7, 8, 9]
   }
   ```
 
 - **Error (400 Bad Request)**
   ```json
   {
-    "error": "Missing or invalid required fields (source/destination/items)"
+    "error": "Missing or invalid required fields (source/destination/menus)"
   }
   ```
 
 ---
 
-## 4. Receive at School
+## 4. Receive at School (Menu-Based)
 
-Logs the receipt of one or more items at a school, presumably from a kitchen.
+Logs the receipt of one or more menus at a school. The API will automatically "explode" the menus into their raw item components and create individual receipt logs for each item.
 
 - **Endpoint:** `/api/receipt/school`
 - **Method:** `POST`
@@ -139,10 +140,11 @@ Logs the receipt of one or more items at a school, presumably from a kitchen.
 
 ```json
 {
-  "receiving_school_id": 10,
-  "source_kitchen_id": 5,
-  "items": [
-    { "item_id": 789, "quantity": 50 }
+  "receiving_school_id": 1,
+  "source_kitchen_id": 1,
+  "menus": [
+    { "menu_id": 1, "quantity": 5 },
+    { "menu_id": 2, "quantity": 9 }
   ]
 }
 ```
@@ -152,14 +154,14 @@ Logs the receipt of one or more items at a school, presumably from a kitchen.
 - **Success (201 Created)**
   ```json
   {
-    "message": "Successfully created 1 receipt logs.",
-    "log_ids": [6]
+    "message": "Successfully created 5 item receipt logs from menus.",
+    "log_ids": [10, 11, 12, 13, 14]
   }
   ```
 
 - **Error (400 Bad Request)**
   ```json
   {
-    "error": "No valid items to log"
+    "error": "No valid menu items to log"
   }
   ```
